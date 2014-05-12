@@ -128,7 +128,9 @@ RTC::ReturnCode_t TorqueFilter::onInitialize()
         std::cerr << "offset[" << m_robot->joint(i)->name << "]: " << m_torque_offset[i] << std::endl;
     }
   } else {
-      std::cerr <<  m_profile.instance_name << " : torque_offset is not set" << std::endl;
+      std::cerr <<  m_profile.instance_name << " : torque_offset is not set." << std::endl;
+      std::cerr <<  "joints: " << m_robot->numJoints() << std::endl;
+      std::cerr <<  "offsets: " << torque_offset.size() << std::endl;
   }
   
   // make filter
@@ -237,8 +239,6 @@ RTC::ReturnCode_t TorqueFilter::onExecute(RTC::UniqueId ec_id)
     m_robot->calcForwardKinematics();
     m_robot->calcCM();
     m_robot->rootLink()->calcSubMassCM();
-
-
     int num_joints = m_robot->numJoints();
     hrp::dvector torque(num_joints);
      
@@ -251,12 +251,12 @@ RTC::ReturnCode_t TorqueFilter::onExecute(RTC::UniqueId ec_id)
     }
       
     if ( DEBUGP ) {
-      std::cerr << "raw torque: ";
+      std::cerr << "RawTorque: ";
       for (int i = 0; i < num_joints; i++) {
         std::cerr << " " << m_tauIn.data[i] ;
       }
       std::cerr << std::endl;
-      std::cerr << "  gravity compensation: ";
+      std::cerr << "GravityCompensation: ";
       for (int i = 0; i < num_joints; i++) {
         std::cerr << " " << g_joint_torque[i];
       }
@@ -287,13 +287,12 @@ RTC::ReturnCode_t TorqueFilter::onExecute(RTC::UniqueId ec_id)
     }
       
     if ( DEBUGP ) {
-      std::cerr << "  torque  : ";
+      std::cerr << "FilteredTorque: ";
       for (int i = 0; i < num_joints; i++) {
         std::cerr << " " << torque[i];
       }
       std::cerr << std::endl;
     }
-    
     m_tauOutOut.write();
   }
   return RTC::RTC_OK;
