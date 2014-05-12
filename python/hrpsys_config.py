@@ -435,15 +435,15 @@ class HrpsysConfigurator:
             ['seq', "SequencePlayer"],
             ['sh', "StateHolder"],
             ['fk', "ForwardKinematics"],
-            ['tf', "TorqueFilter"],
-            ['kf', "KalmanFilter"],
-            ['vs', "VirtualForceSensor"],
-            ['rmfo', "RemoveForceSensorLinkOffset"],
-            ['ic', "ImpedanceController"],
-            ['abc', "AutoBalancer"],
-            ['st', "Stabilizer"],
+            #['tf', "TorqueFilter"],
+            #['kf', "KalmanFilter"],
+            #['vs', "VirtualForceSensor"],
+            #['rmfo', "RemoveForceSensorLinkOffset"],
+            #['ic', "ImpedanceController"],
+            #['abc', "AutoBalancer"],
+            #['st', "Stabilizer"],
             ['co', "CollisionDetector"],
-            ['tc', "TorqueController"],
+            #['tc', "TorqueController"],
             #['te', "ThermoEstimator"],
             #['tl', "ThermoLimiter"],
             ['el', "SoftErrorLimiter"],
@@ -513,6 +513,7 @@ class HrpsysConfigurator:
             self.connectLoggerPort(self.rh, 'emergencySignal', 'emergencySignal')
         for sen in filter(lambda x : x.type == "Force", self.sensors):
             self.connectLoggerPort(self.seq, sen.name+"Ref")
+        self.log_svc.clear()
 
     def waitForRTCManager(self, managerhost=nshost):
         self.ms = None
