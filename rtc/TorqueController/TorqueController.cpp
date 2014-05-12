@@ -20,7 +20,7 @@ static const char* torquecontroller_spec[] =
 {
   "implementation_id", "TorqueController",
   "type_name",         "TorqueController",
-  "description",       "null component",
+  "description",       "Component for joint torque control",
   "version",           HRPSYS_PACKAGE_VERSION,
   "vendor",            "AIST",
   "category",          "example",
@@ -29,10 +29,7 @@ static const char* torquecontroller_spec[] =
   "language",          "C++",
   "lang_type",         "compile",
   // Configuration variables
-  "conf.default.string", "test",
-  "conf.default.intvec", "1,2,3",
-  "conf.default.double", "1.234",
-
+  "conf.default.debugLevel", "0",
   ""
 };
 // </rtc-template>
@@ -225,8 +222,6 @@ RTC::ReturnCode_t TorqueController::onExecute(RTC::UniqueId ec_id)
     for (int i = 0; i < m_robot->numJoints(); i++) {
       m_qRefOut.data[i] = std::min(std::max(m_qRefIn.data[i] - dq[i], m_robot->joint(i)->llimit), m_robot->joint(i)->ulimit);      
     }
-    m_qRefOut.tm = tm;
-    m_qRefOutOut.write();
   } else {
     if (DEBUGP) {
       std::cerr << "TorqueController input is not correct" << std::endl;
@@ -236,7 +231,15 @@ RTC::ReturnCode_t TorqueController::onExecute(RTC::UniqueId ec_id)
       std::cerr << "tauCurrent: " << m_tauCurrentIn.data.length() << std::endl;
       std::cerr << std::endl;
     }
+    // pass qRefIn to qRefOut
+    for (int i = 0; i < m_robot->numJoints(); i++) {
+      m_qRefOut.data[i] = m_qRefIn.data[i];
+    }
   }
+
+  m_qRefOut.tm = tm;
+  m_qRefOutOut.write();
+
   return RTC::RTC_OK;
 }
 
